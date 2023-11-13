@@ -1263,7 +1263,7 @@ int decode_hardware( Eventinfo *lf, cJSON * logJSON,int *socket) {
     char *msg = NULL;
     char *response = NULL;
 
-    if (inventory = cJSON_GetObjectItem(logJSON, "inventory"), inventory) {
+    if (inventory = cJSON_GetObjectItem(logJSON, "inventory"), cJSON_IsObject(inventory)) {
         cJSON * scan_id = cJSON_GetObjectItem(logJSON, "ID");
         cJSON * scan_time = cJSON_GetObjectItem(logJSON, "timestamp");
         cJSON * serial = cJSON_GetObjectItem(inventory, "board_serial");
@@ -1278,7 +1278,7 @@ int decode_hardware( Eventinfo *lf, cJSON * logJSON,int *socket) {
 
         snprintf(msg, OS_SIZE_6144 - 1, "agent %s hardware save", lf->agent_id);
 
-        if (scan_id) {
+        if (cJSON_IsNumber(scan_id)) {
             char id[OS_SIZE_1024];
             snprintf(id, OS_SIZE_1024 - 1, "%d", scan_id->valueint);
             wm_strcat(&msg, id, ' ');
@@ -1286,20 +1286,20 @@ int decode_hardware( Eventinfo *lf, cJSON * logJSON,int *socket) {
             wm_strcat(&msg, "NULL", ' ');
         }
 
-        if (scan_time) {
+        if (cJSON_IsString(scan_time)) {
             wm_strcat(&msg, scan_time->valuestring, '|');
         } else {
             wm_strcat(&msg, "NULL", '|');
         }
 
-        if (serial) {
+        if (cJSON_IsString(serial)) {
             wm_strcat(&msg, serial->valuestring, '|');
             fillData(lf,"hardware.serial",serial->valuestring);
         } else {
             wm_strcat(&msg, "NULL", '|');
         }
 
-        if (cpu_name) {
+        if (cJSON_IsString(cpu_name)) {
             wm_strcat(&msg, cpu_name->valuestring, '|');
             fillData(lf,"hardware.cpu_name",cpu_name->valuestring);
 
@@ -1307,7 +1307,7 @@ int decode_hardware( Eventinfo *lf, cJSON * logJSON,int *socket) {
             wm_strcat(&msg, "NULL", '|');
         }
 
-        if (cpu_cores) {
+        if (cJSON_IsNumber(cpu_cores)) {
             char cores[OS_SIZE_128];
             snprintf(cores, OS_SIZE_128 - 1, "%d", cpu_cores->valueint);
             fillData(lf,"hardware.cpu_cores",cores);
@@ -1316,7 +1316,7 @@ int decode_hardware( Eventinfo *lf, cJSON * logJSON,int *socket) {
             wm_strcat(&msg, "NULL", '|');
         }
 
-        if (cpu_mhz) {
+        if (cJSON_IsNumber(cpu_mhz)) {
             char freq[OS_SIZE_512];
             snprintf(freq, OS_SIZE_512 - 1, "%f", cpu_mhz->valuedouble);
             fillData(lf,"hardware.cpu_mhz",freq);
@@ -1325,7 +1325,7 @@ int decode_hardware( Eventinfo *lf, cJSON * logJSON,int *socket) {
             wm_strcat(&msg, "NULL", '|');
         }
 
-        if (ram_total) {
+        if (cJSON_IsNumber(ram_total)) {
             char total[OS_SIZE_512];
             snprintf(total, OS_SIZE_512 - 1, "%f", ram_total->valuedouble);
             fillData(lf,"hardware.ram_total",total);
@@ -1334,7 +1334,7 @@ int decode_hardware( Eventinfo *lf, cJSON * logJSON,int *socket) {
             wm_strcat(&msg, "NULL", '|');
         }
 
-        if (ram_free) {
+        if (cJSON_IsNumber(ram_free)) {
             char rfree[OS_SIZE_512];
             snprintf(rfree, OS_SIZE_512 - 1, "%f", ram_free->valuedouble);
             fillData(lf,"hardware.ram_free",rfree);
@@ -1343,7 +1343,7 @@ int decode_hardware( Eventinfo *lf, cJSON * logJSON,int *socket) {
             wm_strcat(&msg, "NULL", '|');
         }
 
-        if (ram_usage) {
+        if (cJSON_IsNumber(ram_usage)) {
             char usage[OS_SIZE_128];
             snprintf(usage, OS_SIZE_128 - 1, "%d", ram_usage->valueint);
             fillData(lf,"hardware.ram_usage",usage);
