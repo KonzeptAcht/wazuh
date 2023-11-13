@@ -1581,20 +1581,18 @@ end:
 
 int decode_hotfix(Eventinfo *lf, cJSON * logJSON, int *socket) {
     char * msg = NULL;
-    cJSON * hotfix;
-    cJSON * scan_id;
-    cJSON * scan_time;
+    cJSON * hotfix = cJSON_GetObjectItem(logJSON, "hotfix");
+    cJSON * scan_id = cJSON_GetObjectItem(logJSON, "ID");
+    cJSON * scan_time = cJSON_GetObjectItem(logJSON, "timestamp");
     char response[4096];
 
-    if (scan_id = cJSON_GetObjectItem(logJSON, "ID"), !scan_id) {
+    if (!cJSON_IsNumber(scan_id)) {
         return -1;
     }
 
     os_calloc(OS_SIZE_1024, sizeof(char), msg);
 
-    if (hotfix = cJSON_GetObjectItem(logJSON, "hotfix"), hotfix) {
-        scan_time = cJSON_GetObjectItem(logJSON, "timestamp");
-
+    if (cJSON_IsString(hotfix) && cJSON_IsString(scan_time)) {
         snprintf(msg, OS_SIZE_1024, "agent %s hotfix save %d|%s|%s|",
                 lf->agent_id,
                 scan_id->valueint,
@@ -1610,7 +1608,7 @@ int decode_hotfix(Eventinfo *lf, cJSON * logJSON, int *socket) {
         // Looking for 'end' message.
         char * msg_type = NULL;
 
-        msg_type = cJSON_GetObjectItem(logJSON, "type")->valuestring;
+        msg_type = cJSON_GetStringValue(cJSON_GetObjectItem(logJSON, "type"));
 
         if (!msg_type) {
             merror("Invalid message. Type not found."); // LCOV_EXCL_LINE
