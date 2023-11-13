@@ -1637,7 +1637,7 @@ int decode_process(Eventinfo *lf, cJSON * logJSON,int *socket) {
     cJSON * scan_id;
     int retval = -1;
 
-    if (scan_id = cJSON_GetObjectItem(logJSON, "ID"), !scan_id) {
+    if (scan_id = cJSON_GetObjectItem(logJSON, "ID"), !cJSON_IsNumber(scan_id)) {
         return -1;
     }
 
@@ -1646,7 +1646,7 @@ int decode_process(Eventinfo *lf, cJSON * logJSON,int *socket) {
 
     cJSON * inventory;
 
-    if (inventory = cJSON_GetObjectItem(logJSON, "process"), inventory) {
+    if (inventory = cJSON_GetObjectItem(logJSON, "process"), cJSON_IsObject(inventory)) {
         if (error_process) {
             if (scan_id->valueint == prev_process_id) {
                 retval = 0;
@@ -1691,13 +1691,13 @@ int decode_process(Eventinfo *lf, cJSON * logJSON,int *socket) {
         snprintf(id, OS_SIZE_1024 - 1, "%d", scan_id->valueint);
         wm_strcat(&msg, id, ' ');
 
-        if (scan_time) {
+        if (cJSON_IsString(scan_time)) {
             wm_strcat(&msg, scan_time->valuestring, '|');
         } else {
             wm_strcat(&msg, "NULL", '|');
         }
 
-        if (pid) {
+        if (cJSON_IsNumber(pid)) {
             char _pid[OS_SIZE_128];
             snprintf(_pid, OS_SIZE_128 - 1, "%d", pid->valueint);
             fillData(lf,"process.pid",_pid);
@@ -1706,21 +1706,21 @@ int decode_process(Eventinfo *lf, cJSON * logJSON,int *socket) {
             wm_strcat(&msg, "NULL", '|');
         }
 
-        if (name) {
+        if (cJSON_IsString(name)) {
             wm_strcat(&msg, name->valuestring, '|');
             fillData(lf,"process.name",name->valuestring);
         } else {
             wm_strcat(&msg, "NULL", '|');
         }
 
-        if (state) {
+        if (cJSON_IsString(state)) {
             wm_strcat(&msg, state->valuestring, '|');
             fillData(lf,"process.state",state->valuestring);
         } else {
             wm_strcat(&msg, "NULL", '|');
         }
 
-        if (ppid) {
+        if (cJSON_IsNumber(ppid)) {
             char _ppid[OS_SIZE_128];
             snprintf(_ppid, OS_SIZE_128 - 1, "%d", ppid->valueint);
             fillData(lf,"process.ppid",_ppid);
@@ -1729,7 +1729,7 @@ int decode_process(Eventinfo *lf, cJSON * logJSON,int *socket) {
             wm_strcat(&msg, "NULL", '|');
         }
 
-        if (utime) {
+        if (cJSON_IsNumber(utime)) {
             char _utime[OS_SIZE_128];
             snprintf(_utime, OS_SIZE_128 - 1, "%d", utime->valueint);
             fillData(lf,"process.utime",_utime);
@@ -1738,7 +1738,7 @@ int decode_process(Eventinfo *lf, cJSON * logJSON,int *socket) {
             wm_strcat(&msg, "NULL", '|');
         }
 
-        if (stime) {
+        if (cJSON_IsNumber(stime)) {
             char _stime[OS_SIZE_128];
             snprintf(_stime, OS_SIZE_128 - 1, "%d", stime->valueint);
             fillData(lf,"process.stime",_stime);
@@ -1747,14 +1747,14 @@ int decode_process(Eventinfo *lf, cJSON * logJSON,int *socket) {
             wm_strcat(&msg, "NULL", '|');
         }
 
-        if (cmd) {
+        if (cJSON_IsString(cmd)) {
             wm_strcat(&msg, cmd->valuestring, '|');
             fillData(lf,"process.cmd",cmd->valuestring);
         } else {
             wm_strcat(&msg, "NULL", '|');
         }
 
-        if (argvs) {
+        if (cJSON_IsArray(argvs)) {
             char * args = NULL;
             for (i = 0; i < cJSON_GetArraySize(argvs); i++){
                 wm_strcat(&args, cJSON_GetArrayItem(argvs,i)->valuestring, ',');
@@ -1768,56 +1768,56 @@ int decode_process(Eventinfo *lf, cJSON * logJSON,int *socket) {
             wm_strcat(&msg, "NULL", '|');
         }
 
-        if (euser) {
+        if (cJSON_IsString(euser)) {
             wm_strcat(&msg, euser->valuestring, '|');
             fillData(lf,"process.euser",euser->valuestring);
         } else {
             wm_strcat(&msg, "NULL", '|');
         }
 
-        if (ruser) {
+        if (cJSON_IsString(ruser)) {
             wm_strcat(&msg, ruser->valuestring, '|');
             fillData(lf,"process.ruser",ruser->valuestring);
         } else {
             wm_strcat(&msg, "NULL", '|');
         }
 
-        if (suser) {
+        if (cJSON_IsString(suser)) {
             wm_strcat(&msg, suser->valuestring, '|');
             fillData(lf,"process.suser",suser->valuestring);
         } else {
             wm_strcat(&msg, "NULL", '|');
         }
 
-        if (egroup) {
+        if (cJSON_IsString(egroup)) {
             wm_strcat(&msg, egroup->valuestring, '|');
             fillData(lf,"process.egroup",egroup->valuestring);
         } else {
             wm_strcat(&msg, "NULL", '|');
         }
 
-        if (rgroup) {
+        if (cJSON_IsString(rgroup)) {
             wm_strcat(&msg, rgroup->valuestring, '|');
             fillData(lf,"process.rgroup",rgroup->valuestring);
         } else {
             wm_strcat(&msg, "NULL", '|');
         }
 
-        if (sgroup) {
+        if (cJSON_IsString(sgroup)) {
             wm_strcat(&msg, sgroup->valuestring, '|');
             fillData(lf,"process.sgroup",sgroup->valuestring);
         } else {
             wm_strcat(&msg, "NULL", '|');
         }
 
-        if (fgroup) {
+        if (cJSON_IsString(fgroup)) {
             wm_strcat(&msg, fgroup->valuestring, '|');
             fillData(lf,"process.fgroup",fgroup->valuestring);
         } else {
             wm_strcat(&msg, "NULL", '|');
         }
 
-        if (priority) {
+        if (cJSON_IsNumber(priority)) {
             char prior[OS_SIZE_128];
             snprintf(prior, OS_SIZE_128 - 1, "%d", priority->valueint);
             fillData(lf,"process.priority",prior);
@@ -1826,7 +1826,7 @@ int decode_process(Eventinfo *lf, cJSON * logJSON,int *socket) {
             wm_strcat(&msg, "NULL", '|');
         }
 
-        if (nice) {
+        if (cJSON_IsNumber(nice)) {
             char _nice[OS_SIZE_128];
             snprintf(_nice, OS_SIZE_128 - 1, "%d", nice->valueint);
             fillData(lf,"process.nice",_nice);
@@ -1835,7 +1835,7 @@ int decode_process(Eventinfo *lf, cJSON * logJSON,int *socket) {
             wm_strcat(&msg, "NULL", '|');
         }
 
-        if (size) {
+        if (cJSON_IsNumber(size)) {
             char _size[OS_SIZE_512];
             snprintf(_size, OS_SIZE_512 - 1, "%d", size->valueint);
             fillData(lf,"process.size",_size);
@@ -1844,7 +1844,7 @@ int decode_process(Eventinfo *lf, cJSON * logJSON,int *socket) {
             wm_strcat(&msg, "NULL", '|');
         }
 
-        if (vm_size) {
+        if (cJSON_IsNumber(vm_size)) {
             char vms[OS_SIZE_512];
             snprintf(vms, OS_SIZE_512 - 1, "%d", vm_size->valueint);
             fillData(lf,"process.vm_size",vms);
@@ -1853,7 +1853,7 @@ int decode_process(Eventinfo *lf, cJSON * logJSON,int *socket) {
             wm_strcat(&msg, "NULL", '|');
         }
 
-        if (resident) {
+        if (cJSON_IsNumber(resident)) {
             char _resident[OS_SIZE_512];
             snprintf(_resident, OS_SIZE_512 - 1, "%d", resident->valueint);
             fillData(lf,"process.resident",_resident);
@@ -1862,7 +1862,7 @@ int decode_process(Eventinfo *lf, cJSON * logJSON,int *socket) {
             wm_strcat(&msg, "NULL", '|');
         }
 
-        if (share) {
+        if (cJSON_IsNumber(share)) {
             char _share[OS_SIZE_512];
             snprintf(_share, OS_SIZE_512 - 1, "%d", share->valueint);
             fillData(lf,"process.share",_share);
@@ -1871,7 +1871,7 @@ int decode_process(Eventinfo *lf, cJSON * logJSON,int *socket) {
             wm_strcat(&msg, "NULL", '|');
         }
 
-        if (start_time) {
+        if (cJSON_IsNumber(start_time)) {
             char start[OS_SIZE_512];
             snprintf(start, OS_SIZE_512 - 1, "%d", start_time->valueint);
             fillData(lf,"process.start_time",start);
@@ -1880,7 +1880,7 @@ int decode_process(Eventinfo *lf, cJSON * logJSON,int *socket) {
             wm_strcat(&msg, "NULL", '|');
         }
 
-        if (pgrp) {
+        if (cJSON_IsNumber(pgrp)) {
             char _pgrp[OS_SIZE_512];
             snprintf(_pgrp, OS_SIZE_512 - 1, "%d", pgrp->valueint);
             fillData(lf,"process.pgrp",_pgrp);
@@ -1889,7 +1889,7 @@ int decode_process(Eventinfo *lf, cJSON * logJSON,int *socket) {
             wm_strcat(&msg, "NULL", '|');
         }
 
-        if (session) {
+        if (cJSON_IsNumber(session)) {
             char _session[OS_SIZE_512];
             snprintf(_session, OS_SIZE_512 - 1, "%d", session->valueint);
             fillData(lf,"process.session",_session);
@@ -1898,7 +1898,7 @@ int decode_process(Eventinfo *lf, cJSON * logJSON,int *socket) {
             wm_strcat(&msg, "NULL", '|');
         }
 
-        if (nlwp) {
+        if (cJSON_IsNumber(nlwp)) {
             char _nlwp[OS_SIZE_512];
             snprintf(_nlwp, OS_SIZE_512 - 1, "%d", nlwp->valueint);
             fillData(lf,"process.nlwp",_nlwp);
@@ -1907,7 +1907,7 @@ int decode_process(Eventinfo *lf, cJSON * logJSON,int *socket) {
             wm_strcat(&msg, "NULL", '|');
         }
 
-        if (tgid) {
+        if (cJSON_IsNumber(tgid)) {
             char _tgid[OS_SIZE_512];
             snprintf(_tgid, OS_SIZE_512 - 1, "%d", tgid->valueint);
             fillData(lf,"process.tgid",_tgid);
@@ -1916,7 +1916,7 @@ int decode_process(Eventinfo *lf, cJSON * logJSON,int *socket) {
             wm_strcat(&msg, "NULL", '|');
         }
 
-        if (tty) {
+        if (cJSON_IsNumber(tty)) {
             char _tty[OS_SIZE_512];
             snprintf(_tty, OS_SIZE_512 - 1, "%d", tty->valueint);
             fillData(lf,"process.tty",_tty);
@@ -1925,7 +1925,7 @@ int decode_process(Eventinfo *lf, cJSON * logJSON,int *socket) {
             wm_strcat(&msg, "NULL", '|');
         }
 
-        if (processor) {
+        if (cJSON_IsNumber(processor)) {
             char proc[OS_SIZE_512];
             snprintf(proc, OS_SIZE_512 - 1, "%d", processor->valueint);
             fillData(lf,"process.processor",proc);
@@ -1950,7 +1950,7 @@ int decode_process(Eventinfo *lf, cJSON * logJSON,int *socket) {
         // Looking for 'end' message.
         char * msg_type = NULL;
 
-        msg_type = cJSON_GetObjectItem(logJSON, "type")->valuestring;
+        msg_type = cJSON_GetStringValue(cJSON_GetObjectItem(logJSON, "type"));
 
         if (!msg_type) {
             merror("Invalid message. Type not found."); // LCOV_EXCL_LINE
